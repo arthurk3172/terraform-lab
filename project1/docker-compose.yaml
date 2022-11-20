@@ -1,0 +1,104 @@
+version: '3.5'
+services:
+ mysql:
+  container_name: mysql
+  image: mysql:8.0
+  networks:
+   - zbx_net
+  command:
+   - mysqld
+   - --character-set-server=utf8
+   - --collation-server=utf8_bin
+   - --default-authentication-plugin=mysql_native_password
+  environment:
+   - MYSQL_USER=zabbix
+   - MYSQL_DATABASE=zabbixdb
+   - MYSQL_PASSWORD=zabbix
+   - MYSQL_ROOT_PASSWORD=zabbix@root
+   - ZBX_JAVAGATEWAY=zabbix_java
+  volumes:
+   - /zabbix-mysql:/var/lib/mysql:rw
+ zabbix_server:
+  container_name: zabbix_server
+  image: zabbix/zabbix-server-mysql:alpine-6.2-latest
+  networks:
+   - zbx_net
+  ports:
+   - 10051:10051
+  volumes:
+   - /etc/localtime:/etc/localtime:ro
+   - /etc/timezone:/etc/timezone:ro 
+   - /zabbix-data/alertscripts:/usr/lib/zabbix/alertscripts:ro
+   - /zabbix-data/externalscripts:/usr/lib/zabbix/externalscripts:ro
+   - /zabbix-data/export:/var/lib/zabbix/export:rw
+   - /zabbix-data/modules:/var/lib/zabbix/modules:ro
+   - /zabbix-data/enc:/var/lib/zabbix/enc:ro
+   - /zabbix-data/ssh_keys:/var/lib/zabbix/ssh_keys:ro
+   - /zabbix-data/mibs:/var/lib/zabbix/mibs:ro
+   - /zabbix-data/snmptraps:/var/lib/zabbix/snmptraps:rw
+  environment:
+   - DB_SERVER_HOST=mysql
+   - MYSQL_DATABASE=zabbixdb
+   - MYSQL_USER=zabbix
+   - MYSQL_PASSWORD=zabbix
+   - MYSQL_ROOT_PASSWORD=zabbix@root
+   - ZBX_JAVAGATEWAY=zabbix_java
+
+  depends_on:
+   - mysql
+
+ zabbix_web:
+  container_name: zabbix_web
+  image: zabbix/zabbix-web-apache-mysql:alpine-6.2-latest
+  networks:
+   - zbx_net
+  ports:
+   - 80:8080
+   - 443:8443
+  volumes:
+   - /etc/localtime:/etc/localtime:ro
+   - /etc/timezone:/etc/timezone:ro
+   - /zabbix-apache/apache2:/etc/ssl/apache2:ro
+   - /zabbix-apache/modules/:/usr/share/zabbix/modules/:ro
+  environment:
+   - ZBX_SERVER_HOST=zabbix_server
+   - DB_SERVER_HOST=mysql
+   - MYSQL_DATABASE=zabbixdb
+   - MYSQL_USER=zabbix
+   - MYSQL_PASSWORD=zabbix
+   - MYSQL_ROOT_PASSWORD=zabbix@root
+  depends_on:
+   - mysql
+   - zabbix_server
+
+ zabbix_java:
+  container_name: zabbix_java
+  image: zabbix/zabbix-java-gateway:alpine-6.2-latest
+  networks:
+   - zbx_net
+  ports:
+   - 10052:10052
+ zabbix_agent:
+  container_name: zabbix_agent
+  image: zabbix/zabbix-agent:6.2-alpine-latest
+  networks:
+   - zbx_net  
+  ports:
+   - 10050:10050
+  volumes:
+   - /etc/localtime:/etc/localtime:ro
+   - /etc/timezone:/etc/timezone:ro
+   - /zabbix-agent/etc/zabbix/zabbix_agentd.d:/etc/zabbix/zabbix_agentd.d:ro
+   - /zabbix-agent/var/lib/zabbix/modules:/var/lib/zabbix/modules:ro
+   - /zabbix-agent/var/lib/zabbix/enc:/var/lib/zabbix/enc:ro
+   - /zabbix-agent/var/lib/zabbix/ssh_keys:/var/lib/zabbix/ssh_keys:ro   
+  environment:
+   - ZBX_HOSTNAME=Zabbix server
+   - ZBX_SERVER_HOST=zabbix_server
+
+  depends_on:
+   - zabbix_web 
+
+networks:
+ zbx_net:
+   driver: bridge
