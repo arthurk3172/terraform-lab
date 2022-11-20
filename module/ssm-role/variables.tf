@@ -1,0 +1,6 @@
+variable "owner" {
+  default = "arthurk"
+}
+
+
+
