@@ -37,7 +37,7 @@ curl -s https://api.github.com/repos/docker/compose/releases/latest | grep brows
 chmod +x docker-compose-linux-x86_64
 sudo mv docker-compose-linux-x86_64 /usr/local/bin/docker-compose
 #Get predefined docker compose YAML file from my repo 
-wget https://raw.githubusercontent.com/arthurk3172/lab1/main/docker-compose.yaml
+wget https://raw.githubusercontent.com/arthurk3172/terraform-lab/main/project1/docker-compose.yaml
 # Run containers via docker-compose 
 sudo docker-compose up -d
 #Open ports on firewall 
