@@ -78,6 +78,7 @@ services:
    - zbx_net
   ports:
    - 10052:10052
+   
  zabbix_agent:
   container_name: zabbix_agent
   image: zabbix/zabbix-agent:6.2-alpine-latest
