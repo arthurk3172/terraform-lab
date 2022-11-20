@@ -27,13 +27,18 @@ Before usage:
   3. Paste it to project1/main.tf file in provider section (Not Recomended due Security propose)
 
 
-Usage : 
+Usage :
+
 The "terraform-apply.ps1" script supports flags:
     Mandatory flag -Region (Entry validation with list of all available Regions in AWS, you can use TAB to switch elements in list or autocomplete)
     Mandatory flag -Action (List of 3 actions - "apply" or "plan" or "apply")
     Optional flag -Owner (Owners Name - will create resources with practicular name in resource (Tags) if not defined default variable "arthurk" will be used instead)
 
-Clone via git or download zip to your computer
-Switch to "project1" folder and start deploy infastructure via ps script terraform-apply.ps1 
+ * Clone via git or download zip to your computer
+ * Switch to "project1" folder 
+ * Type terraform init in cli - terraform will download all needed api resourses
+ * Start deploy infastructure using ps script terraform-apply.ps1 
 
-Example: terraform-apply.ps1 -Action plan -Region us-west-1 -Owner Arthur
+Example of script usage: 
+
+ terraform-apply.ps1 -Action plan -Region us-west-1 -Owner Arthur
