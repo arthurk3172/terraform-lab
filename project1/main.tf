@@ -1,7 +1,7 @@
 provider "aws" {
-  region = var.region
-  #access_key = "your access key"
-  #secret_key = "your secret key"
+  region     = var.region
+  access_key = "AWS_ACCESS_KEY_ID"
+  secret_key = "AWS_SECRET_ACCESS_KEY"
 }
 
 # Deploy VPC 
