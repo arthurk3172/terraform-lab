@@ -1,16 +1,16 @@
 provider "aws" {
-  region     = var.region
-  access_key = "your access key"
-  secret_key = "your secret key"
+  region = var.region
+  #access_key = "your access key"
+  #secret_key = "your secret key"
 }
 
-
+# Deploy VPC 
 module "vpc-default" {
   source = "../module/network"
   owner  = var.owner
   region = var.region
 }
-
+#Deploy Security Groups 
 module "sgr-default" {
   source        = "../module/sgr"
   vpc_id        = module.vpc-default.vpc_id
@@ -20,6 +20,7 @@ module "sgr-default" {
   ]
 }
 
+#Deploy SSM Roles and atach Policies
 module "ssm-role-default" {
   source = "../module/ssm-role"
 
@@ -30,7 +31,7 @@ resource "aws_instance" "web_server" {
   count                       = length(module.vpc-default.public_subnet_ids) //Count of servers depends on subnets count, each subnet will have 1 server 
   ami                         = data.aws_ami.ubuntu_ami.id
   instance_type               = var.web_server_instance_type
-  subnet_id                   = module.vpc-default.public_subnet_ids[count.index] //element("${module.vpc-default.public_subnet_ids[*].id}", count.index)
+  subnet_id                   = module.vpc-default.public_subnet_ids[count.index]
   associate_public_ip_address = true
   key_name                    = aws_key_pair.key-arthur.key_name
   vpc_security_group_ids      = [module.sgr-default.sgr-web-id]
@@ -52,7 +53,7 @@ resource "aws_instance" "rdp_server" {
   count                       = length(module.vpc-default.private_subnet_ids)
   ami                         = data.aws_ami.windows2019_ami.id
   instance_type               = var.rdp_windows_srv_instance_type
-  subnet_id                   = module.vpc-default.private_subnet_ids[count.index] //element(aws_subnet.private_subnets[*].id, count.index)
+  subnet_id                   = module.vpc-default.private_subnet_ids[count.index]
   associate_public_ip_address = false
   key_name                    = aws_key_pair.key-arthur.key_name
   vpc_security_group_ids      = [module.sgr-default.sgr-rdp-id]
