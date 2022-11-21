@@ -31,7 +31,7 @@ Usage :
 
 The "terraform-apply.ps1" script supports flags:
     Mandatory flag -Region (Entry validation with list of all available Regions in AWS, you can use TAB to switch elements in list or autocomplete)
-    Mandatory flag -Action (List of 3 actions - "apply" or "plan" or "apply")
+    Mandatory flag -Action (List of 3 actions - "apply" or "plan" or "destroy")
     Optional flag -Owner (Owners Name - will create resources with practicular name in resource (Tags) if not defined default variable "arthurk" will be used instead)
 
  * Clone via git or download zip to your computer
